@@ -1,95 +1,121 @@
 import streamlit as st
 
-# Forçar a limpeza de qualquer lixo de memória anterior
+# Versão Imersão Terapêutica - Sem restrição de dias
+st.set_page_config(page_title="Jornada de Propósito", page_icon="✨")
+
 if 'step' not in st.session_state:
-    st.session_state.step = 1
+    st.session_state.step = 0 # Começa na Introdução
 if 'respostas' not in st.session_state:
     st.session_state.respostas = {}
 
-def mudar_passo(proximo):
-    st.session_state.step = proximo
+def avançar():
+    st.session_state.step += 1
 
 st.title("🌱 Jornada: Encontrando Meu Propósito")
-st.write("---")
 
-# DIA 1
-if st.session_state.step == 1:
-    st.header("Dia 1: O Que Te Move")
-    resp1 = st.text_area("O que ou quem é o seu grande motivo para viver hoje?", key="d1")
-    if st.button("Salvar e Continuar"):
-        if resp1:
-            st.session_state.respostas['motivo'] = resp1
-            mudar_passo(2)
+# PASSO 0: INTRODUÇÃO
+if st.session_state.step == 0:
+    st.header("Bem-vindo, André")
+    st.write("""
+    Esta é uma jornada de imersão desenhada especialmente para você. 
+    Não é um teste, mas um encontro com as suas próprias respostas.
+    
+    Reserve cerca de 20 minutos, sinta-se confortável e responda com o que vier ao seu coração.
+    Suas respostas nos ajudarão a construir um mapa para o seu futuro.
+    """)
+    if st.button("Iniciar Minha Jornada"):
+        avançar()
+        st.rerun()
+
+# PERGUNTA 1
+elif st.session_state.step == 1:
+    st.subheader("Pergunta 1 de 8")
+    resp = st.text_area("O que ou quem é o seu principal motivo para viver hoje?")
+    if st.button("Avançar"):
+        if resp:
+            st.session_state.respostas['Motivo Inicial'] = resp
+            avançar()
             st.rerun()
 
-# DIA 2 - DINÂMICO
+# PERGUNTA 2 (DINÂMICA)
 elif st.session_state.step == 2:
-    motivo = st.session_state.respostas.get('motivo', 'o que você citou')
-    st.header("Dia 2: Além do Óbvio")
-    st.write(f"Você nos contou que **'{motivo}'** é o que te move hoje.")
-    
-    # Pergunta adaptável:
-    q2_texto = f"Além de '{motivo}', o que mais traz sentido ou alegria para o seu dia a dia?"
-    resp2 = st.text_area(q2_texto, key="d2")
-    
-    if st.button("Avançar para o Dia 3"):
-        st.session_state.respostas['alem_do_obvio'] = resp2
-        mudar_passo(3)
+    motivo = st.session_state.respostas.get('Motivo Inicial')
+    st.subheader("Pergunta 2 de 8")
+    st.write(f"Você mencionou: **'{motivo}'**. Isso é muito forte.")
+    resp = st.text_area(f"Além de '{motivo}', que outras coisas, por menores que sejam, trazem um brilho de cor ao seu dia?")
+    if st.button("Avançar"):
+        st.session_state.respostas['Outras Fontes'] = resp
+        avançar()
         st.rerun()
 
-# DIA 3
+# PERGUNTA 3 (LEGADO)
 elif st.session_state.step == 3:
-    st.header("Dia 3: Valores Profundos")
-    valores = st.multiselect("Quais valores são fundamentais para você?", ["Família", "Amor", "Paz", "Liberdade", "Saúde", "Trabalho"])
-    resp3 = st.text_area("Como esses valores aparecem na sua vida?", key="d3")
-    if st.button("Avançar para o Dia 4"):
-        st.session_state.respostas['valores'] = ", ".join(valores)
-        st.session_state.respostas['obs_valores'] = resp3
-        mudar_passo(4)
+    st.subheader("Pergunta 3 de 8")
+    resp = st.text_area("Se você pudesse deixar uma marca no mundo, uma qualidade pela qual ser lembrado, qual seria?")
+    if st.button("Avançar"):
+        st.session_state.respostas['Legado'] = resp
+        avançar()
         st.rerun()
 
-# DIA 4
+# PERGUNTA 4 (VALORES)
 elif st.session_state.step == 4:
-    st.header("Dia 4: Sua Força")
-    st.write("Toda dificuldade nos ensina algo sobre nossa própria força.")
-    resp4 = st.text_area("O que você aprendeu sobre si mesmo nos momentos difíceis?", key="d4")
-    if st.button("Avançar para o Dia 5"):
-        st.session_state.respostas['forca'] = resp4
-        mudar_passo(5)
+    st.subheader("Pergunta 4 de 8")
+    valores = st.multiselect("Quais valores definem quem você quer ser?", ["Amor", "Justiça", "Coragem", "Paz", "Liberdade", "Resiliência"])
+    if st.button("Avançar"):
+        st.session_state.respostas['Valores'] = ", ".join(valores)
+        avançar()
         st.rerun()
 
-# DIA 5
+# PERGUNTA 5 (CONTRIBUIÇÃO)
 elif st.session_state.step == 5:
-    st.header("Dia 5: Seu Propósito")
-    resp5 = st.text_input("Em uma frase, qual é o seu propósito hoje?", key="d5")
-    passo = st.text_input("Qual o primeiro pequeno passo que você dará amanhã?", key="p1")
-    if st.button("Finalizar Jornada"):
-        st.session_state.respostas['proposito'] = resp5
-        st.session_state.respostas['primeiro_passo'] = passo
-        mudar_passo(6)
+    st.subheader("Pergunta 5 de 8")
+    resp = st.text_area("Existe algo que você saiba fazer ou alguma experiência que você viveu que poderia ajudar alguém que está sofrendo hoje?")
+    if st.button("Avançar"):
+        st.session_state.respostas['Contribuição'] = resp
+        avançar()
         st.rerun()
 
-# RELATÓRIO FINAL
+# PERGUNTA 6 (FORÇA NA DOR)
 elif st.session_state.step == 6:
+    st.subheader("Pergunta 6 de 8")
+    st.info("Logoterapia: 'A dor pode ser transformada em conquista'.")
+    resp = st.text_area("O que você aprendeu sobre sua própria força nos momentos de maior escuridão?")
+    if st.button("Avançar"):
+        st.session_state.respostas['Força'] = resp
+        avançar()
+        st.rerun()
+
+# PERGUNTA 7 (SÍNTESE)
+elif st.session_state.step == 7:
+    st.subheader("Pergunta 7 de 8")
+    resp = st.text_input("Diante de tudo o que refletimos, como você descreveria seu propósito em uma frase?")
+    if st.button("Avançar para o Passo Final"):
+        st.session_state.respostas['Propósito'] = resp
+        avançar()
+        st.rerun()
+
+# PERGUNTA 8 (AÇÃO)
+elif st.session_state.step == 8:
+    st.subheader("Pergunta 8 de 8")
+    resp = st.text_input("Qual o primeiro pequeno passo que você dará amanhã para honrar esse propósito?")
+    if st.button("Finalizar Imersão"):
+        st.session_state.respostas['Primeiro Passo'] = resp
+        st.session_state.step = 9
+        st.rerun()
+
+# CONCLUSÃO
+elif st.session_state.step == 9:
     st.balloons()
     st.header("🎯 Jornada Concluída!")
     
-    texto_relatorio = f"""
-    📝 RELATÓRIO DE PROPÓSITO - ANDRÉ
+    relatorio = "📝 MEU MAPA DE PROPÓSITO\n\n"
+    for k, v in st.session_state.respostas.items():
+        relatorio += f"🔹 {k}: {v}\n"
     
-    1. Motivo atual: {st.session_state.respostas.get('motivo')}
-    2. Outras fontes de sentido: {st.session_state.respostas.get('alem_do_obvio')}
-    3. Valores: {st.session_state.respostas.get('valores')}
-    4. Força interna: {st.session_state.respostas.get('forca')}
-    5. PROPÓSITO: {st.session_state.respostas.get('proposito')}
-    6. PRIMEIRO PASSO: {st.session_state.respostas.get('primeiro_passo')}
-    """
+    st.code(relatorio, language="text")
+    st.success("André, essa jornada é o começo de uma nova etapa. Copie o texto acima e envie para mim.")
     
-    st.subheader("Seu resumo está pronto:")
-    st.code(texto_relatorio, language="text")
-    st.info("Copie o texto acima e envie para seu terapeuta no WhatsApp.")
-    
-    if st.button("Reiniciar Teste"):
-        st.session_state.step = 1
+    if st.button("Reiniciar"):
+        st.session_state.step = 0
         st.session_state.respostas = {}
         st.rerun()
